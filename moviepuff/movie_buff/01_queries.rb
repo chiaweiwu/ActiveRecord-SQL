@@ -27,6 +27,7 @@ def harrison_ford
     .select(:id, :title)
     .joins(:actors)
     .where('name = \'Harrison Ford\' AND ord != 1')
+    # .where(actors: { name: 'Harrison Ford' }, castings: { ord: 1 })
 end
 
 def biggest_cast
@@ -64,13 +65,11 @@ def directed_by_one_of(them)
   #
   # Find the id and title of all the movies directed by one of 'them'.
 
-p them
-
   Movie
     .select(:id, :title)
-    .where('director.name IN (?)', them)
-
-
+    .joins(:director)
+    .where('actors.name IN (?)', them)
+    # .where(actors: {name: them}) #same as above, but in more Ruby-like syntax
 end
 
 def movie_names_before_1940
@@ -84,5 +83,8 @@ def movie_names_before_1940
   # improve performace for larger queries.
   #
   # Use pluck to find the title of all movies made before 1940.
+
+  Movie.where('yr < 1940').pluck(:title)
+
 
 end
